@@ -140,15 +140,15 @@ const pvaRoutes = [
     // --- International Routes (Real-world Durations) ---
     { dep: "OPLA", arr: "CYYZ", aircraft: "Boeing 777-200LR", time: "14h 15m", note: "Toronto - Ultra Long Haul" },
     { dep: "OPIS", arr: "EGLL", aircraft: "Boeing 777-200ER", time: "8h 30m", note: "London Heathrow - Flagship Route" },
-    { dep: "OPKC", arr: "OEJN", aircraft: "Boeing 777-300ER", time: "4h 25m", note: "Jeddah - Hajj/Umrah Corridor" },
-    { dep: "OPLA", arr: "OEMA", aircraft: "Boeing 777-200ER", time: "4h 50m", note: "Medina" },
-    { dep: "OPIS", arr: "LTFM", aircraft: "Airbus A320 / Boeing 777-200ER", time: "5h 40m", note: "Istanbul - Strategic Link" },
+    { dep: "OPKC", arr: "OEJN", aircraft: "Boeing 777-300LR", time: "4h 25m", note: "Jeddah - Hajj/Umrah Corridor" },
+    { dep: "OPLA", arr: "OEMA", aircraft: "Boeing 777-200LR", time: "4h 50m", note: "Medina" },
+    { dep: "OPIS", arr: "LTFM", aircraft: "Airbus A320 / Boeing 777-200LR", time: "5h 40m", note: "Istanbul - Strategic Link" },
     { dep: "OPKC", arr: "OMDB", aircraft: "Airbus A320", time: "2h 10m", note: "Dubai - High Frequency" },
     { dep: "OPKC", arr: "VYYY", aircraft: "Airbus A320", time: "5h 25m", note: "Yangon (Beijing Ops)" },
-    { dep: "OPLA", arr: "LEBL", aircraft: "Boeing 777-200ER", time: "8h 55m", note: "Barcelona" },
+    { dep: "OPLA", arr: "LEBL", aircraft: "Boeing 777-200LR", time: "8h 55m", note: "Barcelona" },
     { dep: "OPIS", arr: "OTHH", aircraft: "Airbus A320", time: "3h 35m", note: "Doha" },
-    { dep: "OPKC", arr: "VTBS", aircraft: "Boeing 777-200ER", time: "5h 15m", note: "Bangkok" },
-    { dep: "OPLA", arr: "OEDF", aircraft: "Boeing 777-200ER", time: "4h 20m", note: "Dammam" },
+    { dep: "OPKC", arr: "VTBS", aircraft: "Boeing 777-200LR", time: "5h 15m", note: "Bangkok" },
+    { dep: "OPLA", arr: "OEDF", aircraft: "Boeing 777-200LR", time: "4h 20m", note: "Dammam" },
     { dep: "OPIS", arr: "OERY", aircraft: "Airbus A320", time: "4h 10m", note: "Riyadh" },
 
     // --- Domestic Routes (Pakistan Virtual Network) ---
