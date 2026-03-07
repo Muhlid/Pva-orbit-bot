@@ -139,7 +139,7 @@ async function updateAttendees(message) {
 const pvaRoutes = [
     // --- International Routes (Real-world Durations) ---
     { dep: "OPLA", arr: "CYYZ", aircraft: "Boeing 777-200LR", time: "14h 15m", note: "Toronto - Ultra Long Haul" },
-    { dep: "OPIS", arr: "EGLL", aircraft: "Boeing 777-200ER", time: "8h 30m", note: "London Heathrow - Flagship Route" },
+    { dep: "OPIS", arr: "EGLL", aircraft: "Boeing 777-200LR", time: "8h 30m", note: "London Heathrow - Flagship Route" },
     { dep: "OPKC", arr: "OEJN", aircraft: "Boeing 777-300LR", time: "4h 25m", note: "Jeddah - Hajj/Umrah Corridor" },
     { dep: "OPLA", arr: "OEMA", aircraft: "Boeing 777-200LR", time: "4h 50m", note: "Medina" },
     { dep: "OPIS", arr: "LTFM", aircraft: "Airbus A320 / Boeing 777-200LR", time: "5h 40m", note: "Istanbul - Strategic Link" },
@@ -171,7 +171,7 @@ opsBot.on('messageCreate', async (message) => {
         const randomRoute = pvaRoutes[Math.floor(Math.random() * pvaRoutes.length)];
         
         await message.reply({
-            content: `🎲 **Surprise Route of the Day, Captain!** ✈️\n\n**Departure:** ${randomRoute.dep}\n**Arrival:** ${randomRoute.arr}\n**Suggested Aircraft:** ${randomRoute.aircraft}\n**Estimated Time:** ${randomRoute.time}\n\n*Wishing you smooth flights and safe landings!* 🛫`
+            content: `🎲 **Surprise Route of the Day, Captain!**\n\n**Departure:** ${randomRoute.dep}\n**Arrival:** ${randomRoute.arr}\n**Suggested Aircraft:** ${randomRoute.aircraft}\n**Estimated Time:** ${randomRoute.time}\n\n*Wishing you smooth flights and safe landings!* 🛫`
         });
     }
 });
