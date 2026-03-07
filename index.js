@@ -4,10 +4,10 @@ const bodyParser = require('body-parser');
 const cors = require('cors'); 
 
 // ==========================================
-// 1. DİSCORD BOT AYARLARI (ÇİFT MOTOR SİSTEMİ)
+// 1. DISCORD BOT SETTINGS (DUAL ENGINE SYSTEM)
 // ==========================================
 
-// ✈️ BOT B: PVA Ops Bot (Eski adıyla 'client' - Etkinlikler ve Uçuşları Yönetir)
+// ✈️ BOT B: PVA Ops Bot (Handles Events and Flights)
 const opsBot = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -18,7 +18,7 @@ const opsBot = new Client({
     partials: [Partials.Message, Partials.Channel, Partials.Reaction]
 });
 
-// 🧑‍💼 BOT A: PVA Staff Bot (İnsan Kaynakları - Terfiler ve Rolleri Yönetir)
+// 🧑‍💼 BOT A: PVA Staff Bot (HR - Handles Promotions and Roles)
 const staffBot = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -29,7 +29,7 @@ const staffBot = new Client({
 });
 
 // ==========================================
-// 2. WEB SUNUCUSU (EXPRESS) AYARLARI 
+// 2. WEB SERVER (EXPRESS) SETTINGS
 // ==========================================
 const app = express();
 app.use(cors()); 
@@ -37,12 +37,12 @@ app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 3000;
 
-// Ana Sayfa (UptimeRobot buraya ping atıp sunucuyu uyanık tutacak)
+// Root Endpoint (UptimeRobot ping target)
 app.get('/', (req, res) => {
     res.send('PVA Orbit Multi-Bot System is Online and Running! 🚀');
 });
 
-// Command Center'dan gelen Event (Etkinlik) bildirimlerini yakalama (OPS BOT ATAR)
+// Receive Event notifications from Command Center (OPS BOT SENDS)
 app.post('/api/event-notify', async (req, res) => {
     try {
         const { eventName, multiplier, description, channelId, color } = req.body;
@@ -50,7 +50,7 @@ app.post('/api/event-notify', async (req, res) => {
         const targetChannel = await opsBot.channels.fetch(channelId);
 
         if (!targetChannel) {
-            return res.status(404).json({ error: "Kanal bulunamadı!" });
+            return res.status(404).json({ error: "Channel not found!" });
         }
 
         const eventEmbed = new EmbedBuilder()
@@ -62,19 +62,19 @@ app.post('/api/event-notify', async (req, res) => {
 
         const sentMessage = await targetChannel.send({ embeds: [eventEmbed] });
 
-        // Gönderilen mesaja anında otomatik ✅ emojisi bırak!
+        // Add automatic ✅ reaction to the sent message
         await sentMessage.react('✅');
 
         res.status(200).json({ success: true, messageId: sentMessage.id });
 
     } catch (error) {
         console.error("Webhook Error:", error);
-        res.status(500).json({ error: "Mesaj gönderilemedi." });
+        res.status(500).json({ error: "Failed to send message." });
     }
 });
 
 // ==========================================
-// 3. EMOJİYE TIKLAMA VE ÇEKME OLAYINI YAKALAMA (OPS BOT)
+// 3. REACTION TRACKING SYSTEM (OPS BOT)
 // ==========================================
 opsBot.on('messageReactionAdd', async (reaction, user) => {
     if (user.bot) return;
@@ -96,7 +96,7 @@ opsBot.on('messageReactionRemove', async (reaction, user) => {
     }
 });
 
-// Embed içindeki Katılımcılar listesini güncelleyen fonksiyon
+// Function to update the Attending Pilots list in the Embed
 async function updateAttendees(message) {
     try {
         const embed = message.embeds[0];
@@ -126,18 +126,42 @@ async function updateAttendees(message) {
 
         await message.edit({ embeds: [updatedEmbed] });
     } catch (err) {
-        console.error("Embed güncellenirken hata:", err);
+        console.error("Error updating embed:", err);
     }
 }
 
 // ==========================================
-// 4. GÜNÜN SÜRPRİZ ROTASI SİSTEMİ (!randomflight) - OPS BOT
+// 4. RANDOM FLIGHT GENERATOR (!randomflight) - OPS BOT
+// ==========================================
+// ==========================================
+// 4. RANDOM FLIGHT GENERATOR (!randomflight) - OPS BOT
 // ==========================================
 const pvaRoutes = [
-    { dep: "OPKC", arr: "OPIS", aircraft: "Airbus A320", time: "1h 45m" },
-    { dep: "OPLA", arr: "OMDB", aircraft: "Boeing 777-200LR", time: "3h 10m" },
-    { dep: "OPIS", arr: "EGLL", aircraft: "Boeing 777-200ER", time: "8h 20m" },
-    { dep: "OPKC", arr: "LTFM", aircraft: "Boeing 777-200ER", time: "5h 30m" }
+    // --- International Routes (Real-world Durations) ---
+    { dep: "OPLA", arr: "CYYZ", aircraft: "Boeing 777-200LR", time: "14h 15m", note: "Toronto - Ultra Long Haul" },
+    { dep: "OPIS", arr: "EGLL", aircraft: "Boeing 777-200ER", time: "8h 30m", note: "London Heathrow - Flagship Route" },
+    { dep: "OPKC", arr: "OEJN", aircraft: "Boeing 777-300ER", time: "4h 25m", note: "Jeddah - Hajj/Umrah Corridor" },
+    { dep: "OPLA", arr: "OEMA", aircraft: "Boeing 777-200ER", time: "4h 50m", note: "Medina" },
+    { dep: "OPIS", arr: "LTFM", aircraft: "Airbus A320 / Boeing 777-200ER", time: "5h 40m", note: "Istanbul - Strategic Link" },
+    { dep: "OPKC", arr: "OMDB", aircraft: "Airbus A320", time: "2h 10m", note: "Dubai - High Frequency" },
+    { dep: "OPKC", arr: "VYYY", aircraft: "Airbus A320", time: "5h 25m", note: "Yangon (Beijing Ops)" },
+    { dep: "OPLA", arr: "LEBL", aircraft: "Boeing 777-200ER", time: "8h 55m", note: "Barcelona" },
+    { dep: "OPIS", arr: "OTHH", aircraft: "Airbus A320", time: "3h 35m", note: "Doha" },
+    { dep: "OPKC", arr: "VTBS", aircraft: "Boeing 777-200ER", time: "5h 15m", note: "Bangkok" },
+    { dep: "OPLA", arr: "OEDF", aircraft: "Boeing 777-200ER", time: "4h 20m", note: "Dammam" },
+    { dep: "OPIS", arr: "OERY", aircraft: "Airbus A320", time: "4h 10m", note: "Riyadh" },
+
+    // --- Domestic Routes (Pakistan Virtual Network) ---
+    { dep: "OPIS", arr: "OPSD", aircraft: "Airbus A320", time: "1h 05m", note: "Skardu - Mountain Approach" },
+    { dep: "OPIS", arr: "OPGT", aircraft: "Dash 8-Q400", time: "1h 10m", note: "Gilgit - World's Most Dangerous" },
+    { dep: "OPKC", arr: "OPLA", aircraft: "Boeing 777 / A320", time: "1h 40m", note: "Karachi-Lahore Trunk" },
+    { dep: "OPIS", arr: "OPKC", aircraft: "Airbus A320", time: "1h 55m", note: "Islamabad-Karachi" },
+    { dep: "OPKC", arr: "OPQT", aircraft: "Airbus A320", time: "1h 20m", note: "Quetta" },
+    { dep: "OPLA", arr: "OPMT", aircraft: "Airbus A320", time: "0h 55m", note: "Multan" },
+    { dep: "OPKC", arr: "OPGZ", aircraft: "Dash 8-Q400", time: "1h 35m", note: "Gwadar" },
+    { dep: "OPLA", arr: "OPST", aircraft: "Airbus A320", time: "0h 45m", note: "Sialkot" },
+    { dep: "OPIS", arr: "OPPS", aircraft: "Airbus A320", time: "0h 50m", note: "Peshawar" },
+    { dep: "OPKC", arr: "OPSK", aircraft: "Dash 8-Q400", time: "1h 15m", note: "Sukkur" }
 ];
 
 opsBot.on('messageCreate', async (message) => {
@@ -147,13 +171,13 @@ opsBot.on('messageCreate', async (message) => {
         const randomRoute = pvaRoutes[Math.floor(Math.random() * pvaRoutes.length)];
         
         await message.reply({
-            content: `🎲 **Günün Sürpriz Rotası Çekildi, Kaptan!** ✈️\n\n**Kalkış:** ${randomRoute.dep}\n**Varış:** ${randomRoute.arr}\n**Önerilen Uçak:** ${randomRoute.aircraft}\n**Tahmini Süre:** ${randomRoute.time}\n\n*Sorunsuz uçuşlar ve güvenli inişler dileriz!* 🛫`
+            content: `🎲 **Surprise Route of the Day, Captain!** ✈️\n\n**Departure:** ${randomRoute.dep}\n**Arrival:** ${randomRoute.arr}\n**Suggested Aircraft:** ${randomRoute.aircraft}\n**Estimated Time:** ${randomRoute.time}\n\n*Wishing you smooth flights and safe landings!* 🛫`
         });
     }
 });
 
 // ==========================================
-// 5. BOTLARI BAŞLATMA VE TOKEN AYARLARI
+// 5. BOT INITIALIZATION AND TOKEN CONFIG
 // ==========================================
 opsBot.once('ready', () => {
     console.log(`✅ [OPS] Logged in as ${opsBot.user.tag}!`);
@@ -165,24 +189,24 @@ staffBot.once('ready', () => {
     staffBot.user.setActivity('Pilot Roster & Ranks', { type: ActivityType.Watching });
 });
 
-// Render Environment Variables'dan Tokenları Çekiyoruz
-const OPS_TOKEN = process.env.DISCORD_TOKEN || process.env.OPS_BOT_TOKEN; // Mevcut token'ı Ops botuna devrettik
+// Pulling Tokens from Render Environment Variables
+const OPS_TOKEN = process.env.DISCORD_TOKEN || process.env.OPS_BOT_TOKEN; 
 const STAFF_TOKEN = process.env.STAFF_BOT_TOKEN; 
 
 app.listen(PORT, () => {
     console.log(`Web server is listening on port ${PORT}`);
     
-    // Ops Botunu Başlat
+    // Start Ops Bot
     if (OPS_TOKEN) {
         opsBot.login(OPS_TOKEN).catch(err => console.error("Ops Bot Login Error:", err));
     } else {
-        console.error("HATA: OPS_TOKEN (veya DISCORD_TOKEN) bulunamadı!");
+        console.error("ERROR: OPS_TOKEN (or DISCORD_TOKEN) not found!");
     }
 
-    // Staff Botunu Başlat
+    // Start Staff Bot
     if (STAFF_TOKEN) {
         staffBot.login(STAFF_TOKEN).catch(err => console.error("Staff Bot Login Error:", err));
     } else {
-        console.log("⚠️ UYARI: STAFF_BOT_TOKEN bulunamadı. Lütfen Render'a ekleyin!");
+        console.log("⚠️ WARNING: STAFF_BOT_TOKEN not found. Please add it to Render env variables!");
     }
 });
